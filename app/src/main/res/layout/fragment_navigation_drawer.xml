@@ -1,10 +1,42 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.finnishverbix.NagvigationDrawer.NavigationDrawerFragment">
+    tools:context="com.finnishverbix.NagvigationDrawer.NavigationDrawerFragment"
+    android:background="#EEEEDD">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView android:layout_width="match_parent" android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+    <!-- TODO: NAVIGATION DRAWER WITH RECYCLER VIEW
+     THE NAVIGATION DRAWER INCLUDE:
+        1. Flag picture
+        2. recycler view which has menu items -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/primaryColor"
+        android:id="@+id/containerDrawerImage"
+        android:orientation="vertical"
+        tools:context="com.example.longtran.materialtest.NavigationDrawerFragment">
 
-</FrameLayout>
+        <!-- TODO: Update blank fragment layout -->
+        <ImageView
+            android:layout_width="280dp"
+            android:layout_height="140dp"
+            android:src="@drawable/finland_flag"
+            android:layout_marginTop="7dp" />
+        <View
+
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/dividerColor"
+            ></View>
+
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/drawerList"
+        android:layout_below="@+id/containerDrawerImage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </android.support.v7.widget.RecyclerView>
+
+</RelativeLayout>

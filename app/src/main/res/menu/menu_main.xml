@@ -8,5 +8,5 @@
         android:title="HELP"
         android:orderInCategory="200"
         app:showAsAction="always"
-        android:icon="@drawable/ic_action_help" />
+        android:icon="@drawable/ic_help_white_36dp" />
 </menu>
