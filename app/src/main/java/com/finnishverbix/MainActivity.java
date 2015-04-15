@@ -1,5 +1,6 @@
 package com.finnishverbix;
 
+import android.content.Intent;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -48,6 +49,8 @@ public class MainActivity extends ActionBarActivity {
 
         if(id == R.id.navigate)
             navigationDrawerFragment.selectItem(2);
+        if(id == R.id.add)
+            startActivity(new Intent(this,AddingActivity.class));
         //noinspection SimplifiableIfStatement
 
 
