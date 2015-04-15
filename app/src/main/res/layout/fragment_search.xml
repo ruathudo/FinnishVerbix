@@ -1,9 +1,171 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" tools:context="com.finnishverbix.Fragment.SearchFragment">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.longtran.materialtest.Fragment.Menu1_Fragment"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/apk/res-auto">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView android:layout_width="match_parent" android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:id="@+id/card_view_search"
+        card_view:cardCornerRadius="4dp">
 
-</FrameLayout>
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/accentColor">
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="30dp"
+                    android:text="Search Here "
+                    android:background="@color/accentColor"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:textSize="20dp"
+                    android:textIsSelectable="false"
+                    android:textStyle="bold"
+                    android:typeface="normal"
+                    android:id="@+id/textViewLong"
+                    android:autoText="true"
+                    android:textColor="#FFF" />
+
+                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:background="#FFF"
+                    android:layout_below="@id/textViewLong">
+
+                    <EditText
+                        android:layout_width="fill_parent"
+                        android:layout_height="65dp"
+                        android:id="@+id/editText"
+
+                        android:hint="type here"
+
+                        android:inputType="text"
+                        android:singleLine="true"
+                        android:focusable="true"
+                        android:layout_weight="0.3"
+                        android:gravity="bottom" />
+
+                    <com.gc.materialdesign.views.ButtonRectangle
+                        android:id="@+id/buttonSearch"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/accentColor"
+                        android:text="Search"
+                        android:layout_weight="1" />
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/card_view_search"
+        android:layout_margin="5dp"
+        card_view:cardCornerRadius="4dp">
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <TextView
+                android:id="@+id/textViewResultHeader"
+                android:layout_width="fill_parent"
+                android:layout_height="30dp"
+                android:background="@color/accentColor"
+                android:text="Result"
+                android:textSize="20dp"
+                android:textIsSelectable="false"
+                android:textStyle="bold"
+                android:typeface="normal"
+                android:textColor="#FFF"
+                android:gravity="center_vertical|center_horizontal" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="20dp"
+                android:id="@+id/linearLayoutOfMeaning"
+                android:layout_below="@+id/textViewResultHeader"
+                android:orientation="horizontal"
+                android:background="@color/dividerColor"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:text="Meaning:"
+                    android:layout_marginLeft="5dp"
+                    android:id="@+id/textViewMeaningFix"
+                    android:layout_weight="1"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:text="New Text"
+                    android:id="@+id/textViewMeaning"
+                    android:layout_weight="3"
+                    android:textColor="#FFF"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:text="Verb Type:"
+                    android:id="@+id/textViewVerbtypeFix"
+                    android:layout_weight="1"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:text="New Text"
+                    android:id="@+id/textViewVerbtype"
+                    android:layout_weight="1"
+                    android:textColor="#FFF"/>
+            </LinearLayout>
+
+            <ExpandableListView
+                android:id="@+id/exapandableListView"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_below="@+id/linearLayoutOfMeaning">
+
+            </ExpandableListView>
+
+            <com.melnykov.fab.FloatingActionButton
+                android:id="@+id/fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|right"
+                android:layout_margin="16dp"
+                android:src="@drawable/ic_bookmark_white_24dp"
+                fab:fab_colorNormal="@color/accentColor"
+                fab:fab_colorPressed="@color/secondaryTextColor"
+                fab:fab_colorRipple="@color/primaryTextColor"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+
+                />
+
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+</RelativeLayout>
