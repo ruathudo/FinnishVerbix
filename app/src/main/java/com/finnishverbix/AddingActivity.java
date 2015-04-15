@@ -1,8 +1,10 @@
 package com.finnishverbix;
 
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -91,7 +93,7 @@ public class AddingActivity extends ActionBarActivity {
                 edit11.setText("");
                 edit12.setText("");
                 edit13.setText("");
-
+                //Log.d("Perfect and imperfect", e6 + e7);
                 Toast.makeText(getApplicationContext(),"Success Adding",Toast.LENGTH_LONG).show();
             }
         });
@@ -114,7 +116,9 @@ public class AddingActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-
+        if(id ==android.R.id.home){
+            NavUtils.navigateUpFromSameTask(this);
+        }
 
         return super.onOptionsItemSelected(item);
     }

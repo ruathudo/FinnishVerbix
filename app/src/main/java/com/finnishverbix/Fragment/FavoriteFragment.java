@@ -1,7 +1,9 @@
 package com.finnishverbix.Fragment;
 
 
+import android.app.ProgressDialog;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -24,6 +26,9 @@ public class FavoriteFragment extends Fragment {
     ListView listView;
     View rootView;
     SqliteHandler sqliteHandler;
+    ArrayList<WordItem> wordList;
+    ProgressDialog mProgressDialog;
+    WordListAdapter wordListAdapter;
     public FavoriteFragment() {
         // Required empty public constructor
     }
@@ -36,13 +41,41 @@ public class FavoriteFragment extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_favorite, container, false);
         listView = (ListView) rootView.findViewById(R.id.listViewFavorite);
         sqliteHandler = new SqliteHandler(getActivity());
-        showList();
+        new QueryDatabase().execute();
 
         return rootView;
     }
+    private class QueryDatabase extends AsyncTask<Void,Void,Void>{
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            // Create a progressdialog
+            mProgressDialog = new ProgressDialog(getActivity());
+            // Set progressdialog title
+            mProgressDialog.setTitle("Retrieving Data");
+            // Set progressdialog message
+            mProgressDialog.setMessage("Loading...");
+            mProgressDialog.setIndeterminate(false);
+            // Show progressdialog
+            mProgressDialog.show();
+        }
+        @Override
+        protected Void doInBackground(Void... voids) {
+            showList();
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void args) {
+
+            wordListAdapter = new WordListAdapter(getActivity(),wordList);
+            listView.setAdapter(wordListAdapter);
+            // Close the progressdialog
+            mProgressDialog.dismiss();
+        }
+    }
 
     private void showList() {
-        ArrayList<WordItem> wordList = new ArrayList<WordItem>();
+        wordList = new ArrayList<WordItem>();
         wordList.clear();;
         String query = "SELECT * FROM FINNISH_WORDS ";
         Cursor cursor = sqliteHandler.selectQuery(query);
@@ -67,7 +100,6 @@ public class FavoriteFragment extends Fragment {
             }
         }
         cursor.close();
-        WordListAdapter wordListAdapter = new WordListAdapter(getActivity(),wordList);
-        listView.setAdapter(wordListAdapter);
+
     }
 }

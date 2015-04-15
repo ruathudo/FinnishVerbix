@@ -30,6 +30,7 @@ public class SqliteHandler {
             }
             sqLiteDatabase = sqlDbHelper.getWritableDatabase();
             sqLiteDatabase.execSQL(query);
+
         }catch (Exception e){
             Log.e("Execute query", "" + e);
             e.printStackTrace();

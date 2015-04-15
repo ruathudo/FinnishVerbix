@@ -5,7 +5,10 @@ package com.finnishverbix.FavoriteFragment;
  */
 public class WordItem {
     String id,verb,meaning,type,present,perfect,imperfect,pluperfect,potential,potentialperfect,conditional,infinitive2,infinitive3;
-/*
+
+    public WordItem(){
+
+    }
     public WordItem(String id, String verb, String meaning, String type, String present, String perfect, String imperfect, String pluperfect, String potential, String potentialperfect, String conditional, String infinitive2, String infinitive3) {
         this.id = id;
         this.verb = verb;
@@ -20,7 +23,7 @@ public class WordItem {
         this.conditional = conditional;
         this.infinitive2 = infinitive2;
         this.infinitive3 = infinitive3;
-    }*/
+    }
 
     public String getId() {
         return id;

@@ -19,7 +19,16 @@
         <activity
             android:name=".AddingActivity"
             android:label="@string/title_activity_adding" >
-            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".MainActivity"/>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <activity
+            android:name=".WordReviewActivity"
+            android:label="@string/title_activity_word_review" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
         </activity>
     </application>
 

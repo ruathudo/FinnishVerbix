@@ -1,0 +1,89 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.finnishverbix.WordReviewActivity"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+    <include
+        android:id="@+id/app_bar_sub2"
+        layout="@layout/app_bar" />
+    <android.support.v7.widget.CardView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/card_view_review"
+        android:layout_margin="5dp"
+        card_view:cardCornerRadius="4dp">
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <TextView
+                android:id="@+id/textViewReviewHeader"
+                android:layout_width="fill_parent"
+                android:layout_height="30dp"
+                android:background="@color/accentColor"
+                android:text="Result"
+                android:textSize="20dp"
+                android:textIsSelectable="false"
+                android:textStyle="bold"
+                android:typeface="normal"
+                android:textColor="#FFF"
+                android:gravity="center_vertical|center_horizontal" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="20dp"
+                android:id="@+id/linearLayoutOfMeaningReview"
+                android:layout_below="@+id/textViewReviewHeader"
+                android:orientation="horizontal"
+                android:background="@color/dividerColor"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:text="Meaning:"
+                    android:layout_marginLeft="5dp"
+                    android:id="@+id/textViewMeaningFix2"
+                    android:layout_weight="1"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:text="New Text"
+                    android:id="@+id/textViewMeaning2"
+                    android:layout_weight="3"
+                    android:textColor="#FFF"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:text="Verb Type:"
+                    android:id="@+id/textViewVerbtypeFix2"
+                    android:layout_weight="1"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:text="New Text"
+                    android:id="@+id/textViewVerbtype2"
+                    android:layout_weight="1"
+                    android:textColor="#FFF"/>
+            </LinearLayout>
+
+            <ExpandableListView
+                android:id="@+id/exapandableListView1"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_below="@+id/linearLayoutOfMeaningReview">
+
+            </ExpandableListView>
+
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>
