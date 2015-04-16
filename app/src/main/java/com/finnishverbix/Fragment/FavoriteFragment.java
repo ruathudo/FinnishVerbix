@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -17,6 +18,7 @@ import android.widget.ListView;
 
 
 import com.finnishverbix.FavoriteFragment.FavoriteRecycleAdapter;
+import com.finnishverbix.FavoriteFragment.RecyclerItemClickListener;
 import com.finnishverbix.FavoriteFragment.SwipeDismissRecyclerViewTouchListener;
 import com.finnishverbix.FavoriteFragment.WordItem;
 import com.finnishverbix.FavoriteFragment.WordListAdapter;
@@ -88,7 +90,9 @@ public class FavoriteFragment extends Fragment  {
         }
         @Override
         protected void onPostExecute(Void args) {
+
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+            recyclerView.setItemAnimator(new DefaultItemAnimator());
             favoriteRecycleAdapter = new FavoriteRecycleAdapter(getActivity(),wordList);
             recyclerView.setAdapter(favoriteRecycleAdapter);
 
@@ -121,6 +125,14 @@ public class FavoriteFragment extends Fragment  {
           //  listView.setAdapter(wordListAdapter);
             // Close the progressdialog
             recyclerView.setOnTouchListener(touchListener);
+            recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(),
+                    recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
+                @Override
+                public void onItemClick(View view, int position) {
+                    singleItemIntent(position);
+                }
+            }));
+
             mProgressDialog.dismiss();
         }
     }

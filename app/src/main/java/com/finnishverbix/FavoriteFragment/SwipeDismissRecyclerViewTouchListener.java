@@ -98,7 +98,7 @@ public class SwipeDismissRecyclerViewTouchListener implements View.OnTouchListen
     private boolean mPaused;
 
     /**
-     * The callback interface used by { to inform its client
+     * The callback interface used by {@link com.example.android.swipedismiss.SwipeDismissRecyclerViewTouchListener} to inform its client
      * about a successful dismissal of one or more list item positions.
      */
     public interface DismissCallbacks {
@@ -149,7 +149,10 @@ public class SwipeDismissRecyclerViewTouchListener implements View.OnTouchListen
      * Returns an {@link AbsListView.OnScrollListener} to be added to the {@link
      * ListView} using {@link ListView#setOnScrollListener(AbsListView.OnScrollListener)}.
      * If a scroll listener is already assigned, the caller should still pass scroll changes through
-     * to this listener. This will ensure that this
+     * to this listener. This will ensure that this {@link com.example.android.swipedismiss.SwipeDismissRecyclerViewTouchListener} is
+     * paused during list view scrolling.</p>
+     *
+     * @see com.example.android.swipedismiss.SwipeDismissRecyclerViewTouchListener
      */
     public RecyclerView.OnScrollListener makeScrollListener() {
         return new RecyclerView.OnScrollListener() {
