@@ -2,33 +2,44 @@ package com.finnishverbix.Fragment;
 
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.finnishverbix.FavoriteFragment.FavoriteRecycleAdapter;
 import com.finnishverbix.FavoriteFragment.WordItem;
 import com.finnishverbix.FavoriteFragment.WordListAdapter;
 import com.finnishverbix.R;
 import com.finnishverbix.SQL.SqliteHandler;
+import com.finnishverbix.WordReviewActivity;
 
 import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FavoriteFragment extends Fragment {
+public class FavoriteFragment extends Fragment  {
 
-    ListView listView;
+
     View rootView;
     SqliteHandler sqliteHandler;
     ArrayList<WordItem> wordList;
     ProgressDialog mProgressDialog;
+
     WordListAdapter wordListAdapter;
+    ListView listView;
+
+    FavoriteRecycleAdapter favoriteRecycleAdapter;
+    RecyclerView recyclerView;
+
     public FavoriteFragment() {
         // Required empty public constructor
     }
@@ -39,12 +50,17 @@ public class FavoriteFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_favorite, container, false);
-        listView = (ListView) rootView.findViewById(R.id.listViewFavorite);
+        recyclerView  = (RecyclerView) rootView.findViewById(R.id.containerWordFavorite);
+       // listView = (ListView) rootView.findViewById(R.id.listViewFavorite);
         sqliteHandler = new SqliteHandler(getActivity());
+
         new QueryDatabase().execute();
 
         return rootView;
     }
+
+
+
     private class QueryDatabase extends AsyncTask<Void,Void,Void>{
         @Override
         protected void onPreExecute() {
@@ -66,10 +82,34 @@ public class FavoriteFragment extends Fragment {
         }
         @Override
         protected void onPostExecute(Void args) {
+            favoriteRecycleAdapter = new FavoriteRecycleAdapter(getActivity(),wordList);
 
-            wordListAdapter = new WordListAdapter(getActivity(),wordList);
-            listView.setAdapter(wordListAdapter);
+            recyclerView.setAdapter(favoriteRecycleAdapter);
+            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+            favoriteRecycleAdapter.setClickListener(new FavoriteRecycleAdapter.ClickListenerCardView() {
+                @Override
+                public void itemClicked(View view, int position) {
+                    WordItem wordItem = wordList.get(position);
+                    Intent intent = new Intent(rootView.getContext(), WordReviewActivity.class);
+                    intent.putExtra("Verb", wordItem.getVerb());
+                    intent.putExtra("Meaning", wordItem.getMeaning());
+                    intent.putExtra("Type", wordItem.getType());
+                    intent.putExtra("Present", wordItem.getPresent());
+                    intent.putExtra("Perfect", wordItem.getPerfect());
+                    intent.putExtra("Imperfect", wordItem.getImperfect());
+                    intent.putExtra("Pluperfect", wordItem.getPluperfect());
+                    intent.putExtra("Potential", wordItem.getPotential());
+                    intent.putExtra("PotentialPerfect", wordItem.getPotentialperfect());
+                    intent.putExtra("Conditional", wordItem.getConditional());
+                    intent.putExtra("Infinitive2", wordItem.getInfinitive2());
+                    intent.putExtra("Infinitive3", wordItem.getInfinitive3());
+                    rootView.getContext().startActivity(intent);
+                }
+            });
+            //wordListAdapter = new WordListAdapter(getActivity(),wordList);
+          //  listView.setAdapter(wordListAdapter);
             // Close the progressdialog
+
             mProgressDialog.dismiss();
         }
     }
