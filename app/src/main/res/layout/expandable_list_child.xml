@@ -9,5 +9,6 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="child"
         android:id="@+id/textViewListChild"
-        android:textColor="@color/accentColor"/>
+        android:textColor="@color/accentColor"
+        android:layout_margin="5dp"/>
 </LinearLayout>

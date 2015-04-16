@@ -23,6 +23,10 @@ public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
     private List<String> listHeader;
     private HashMap<String,String> listDataChild;
 
+    public CustomExpandableListAdapter(Context context) {
+        this.context = context;
+    }
+
     public CustomExpandableListAdapter(Context context, List<String> Strings, HashMap<String, String> listDataChild){
         this.context = context;
         this.listHeader = Strings;

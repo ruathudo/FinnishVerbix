@@ -50,10 +50,8 @@
                         android:id="@+id/editText"
 
                         android:hint="type here"
-
-                        android:inputType="text"
                         android:singleLine="true"
-                        android:focusable="true"
+
                         android:layout_weight="0.3"
                         android:gravity="bottom" />
 
@@ -149,7 +147,7 @@
             </ExpandableListView>
 
             <com.melnykov.fab.FloatingActionButton
-                android:id="@+id/fab"
+                android:id="@+id/fabSave"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|right"
@@ -160,7 +158,7 @@
                 fab:fab_colorRipple="@color/primaryTextColor"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentBottom="true"
-
+                android:visibility="gone"
                 />
 
 
