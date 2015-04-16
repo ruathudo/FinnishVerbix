@@ -77,12 +77,12 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
 
     private List<NavigationDrawerItem> getData() {
         List<NavigationDrawerItem> itemList = new ArrayList<NavigationDrawerItem>();
-        itemList.add(new NavigationDrawerItem(R.drawable.ic_search_black_36dp, "Search"));
-        itemList.add(new NavigationDrawerItem(R.drawable.ic_bookmark_black_36dp, "Favorite"));
+        itemList.add(new NavigationDrawerItem(R.drawable.ic_search_black_24dp, "Search"));
+        itemList.add(new NavigationDrawerItem(R.drawable.ic_bookmark_outline_black_24dp, "Favorite"));
 
-        itemList.add(new NavigationDrawerItem(R.drawable.ic_help_black_36dp, "Help"));
-        itemList.add(new NavigationDrawerItem(R.drawable.ic_settings_applications_black_36dp, "Settings"));
-        itemList.add(new NavigationDrawerItem(R.drawable.ic_info_black_36dp, "About"));
+        itemList.add(new NavigationDrawerItem(R.drawable.ic_live_help_black_24dp, "Help"));
+        itemList.add(new NavigationDrawerItem(R.drawable.ic_settings_applications_black_24dp, "Settings"));
+        itemList.add(new NavigationDrawerItem(R.drawable.ic_info_outline_black_24dp, "About"));
         return  itemList;
     }
 
