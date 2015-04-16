@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.Toast;
 
 
 import com.finnishverbix.FavoriteFragment.FavoriteRecycleAdapter;
@@ -58,10 +59,12 @@ public class FavoriteFragment extends Fragment  {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_favorite, container, false);
-        recyclerView  = (RecyclerView) rootView.findViewById(R.id.containerWordFavorite);
+
        // listView = (ListView) rootView.findViewById(R.id.listViewFavorite);
         sqliteHandler = new SqliteHandler(getActivity());
-
+        recyclerView  = (RecyclerView) rootView.findViewById(R.id.containerWordFavorite);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
         new QueryDatabase().execute();
 
         return rootView;
@@ -91,8 +94,6 @@ public class FavoriteFragment extends Fragment  {
         @Override
         protected void onPostExecute(Void args) {
 
-            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-            recyclerView.setItemAnimator(new DefaultItemAnimator());
             favoriteRecycleAdapter = new FavoriteRecycleAdapter(getActivity(),wordList);
             recyclerView.setAdapter(favoriteRecycleAdapter);
 
@@ -104,8 +105,11 @@ public class FavoriteFragment extends Fragment  {
             });*/
 
             //Handle Swipe Dismiss
+            favoriteRecycleAdapter = new FavoriteRecycleAdapter(getActivity(),wordList);
+            recyclerView.setAdapter(favoriteRecycleAdapter);
             SwipeDismissRecyclerViewTouchListener touchListener =
-                    new SwipeDismissRecyclerViewTouchListener(recyclerView,
+                    new SwipeDismissRecyclerViewTouchListener(
+                            recyclerView,
                             new SwipeDismissRecyclerViewTouchListener.DismissCallbacks() {
                                 @Override
                                 public boolean canDismiss(int position) {
@@ -114,16 +118,15 @@ public class FavoriteFragment extends Fragment  {
 
                                 @Override
                                 public void onDismiss(RecyclerView recyclerView, int[] reverseSortedPositions) {
-                                    for(int position : reverseSortedPositions){
+                                    for (int position : reverseSortedPositions) {
                                         swipe_position = position;
-                                        Log.d("TOUCH ","TOUCH");
                                         ConfirmationDiaglogBeforeDelete();
+
                                     }
+                                    // do not call notifyItemRemoved for every item, it will cause gaps on deleting items
                                 }
                             });
-            //wordListAdapter = new WordListAdapter(getActivity(),wordList);
-          //  listView.setAdapter(wordListAdapter);
-            // Close the progressdialog
+
             recyclerView.setOnTouchListener(touchListener);
             recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(),
                     recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
@@ -138,7 +141,7 @@ public class FavoriteFragment extends Fragment  {
     }
 
     private void ConfirmationDiaglogBeforeDelete() {
-        WordItem item = wordList.get(swipe_position);
+        final WordItem item = wordList.get(swipe_position);
         final MaterialDialog delete_confirm_dialog;
         delete_confirm_dialog = new MaterialDialog(getActivity());
         delete_confirm_dialog.setTitle("DELETE")
@@ -146,7 +149,12 @@ public class FavoriteFragment extends Fragment  {
         .setPositiveButton("YES", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                delete_confirm_dialog.dismiss();
+                String query = "DELETE FROM FINNISH_WORDS WHERE Verb = '"+item.getVerb()+"';";
+                sqliteHandler.executeQuery(query); //Delete in the Database
+                delete_confirm_dialog.dismiss(); // the confirm dialog disapear
+                wordList.remove(swipe_position); // remove the item from the list
+                favoriteRecycleAdapter.notifyDataSetChanged(); //notify the adapter for the change
+                Toast.makeText(rootView.getContext(),"Deleted",Toast.LENGTH_SHORT).show(); //Show the word has been deleted
             }
         }).setNegativeButton("NO", new View.OnClickListener() {
             @Override
@@ -158,6 +166,7 @@ public class FavoriteFragment extends Fragment  {
     }
 
     private void singleItemIntent(int position) {
+        //CREATE INTENT AND PUT EXTRASTRING TO THE SINGLE ITEM VIEW ACTIVIIES
         WordItem wordItem = wordList.get(position);
         Intent intent = new Intent(rootView.getContext(), WordReviewActivity.class);
         intent.putExtra("Verb", wordItem.getVerb());

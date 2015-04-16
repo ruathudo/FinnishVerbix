@@ -11,4 +11,6 @@
     <string name="drawer_close">Close</string>
     <string name="title_activity_adding">AddingActivity</string>
     <string name="title_activity_word_review">WordReviewActivity</string>
+    <string name="deleted">Delete</string>
+    <string name="undo">Undo</string>
 </resources>

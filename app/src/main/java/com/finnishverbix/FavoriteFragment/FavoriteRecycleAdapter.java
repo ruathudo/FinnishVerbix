@@ -19,7 +19,6 @@ import java.util.List;
  */
 public class FavoriteRecycleAdapter extends RecyclerView.Adapter<FavoriteRecycleAdapter.MyFavoriteViewHolder> {
 
-    ClickListenerCardView clickListener;
     private LayoutInflater inflater;
     List<WordItem> wordItems = Collections.emptyList(); // to make sure the list is empty
     Context context;
@@ -51,14 +50,8 @@ public class FavoriteRecycleAdapter extends RecyclerView.Adapter<FavoriteRecycle
         return wordItems.size();
     }
 
-    public void setClickListener(ClickListenerCardView clickListener){
-        this.clickListener = clickListener;
 
-    }
-
-
-
-    public class MyFavoriteViewHolder extends  RecyclerView.ViewHolder implements  View.OnClickListener{
+    public class MyFavoriteViewHolder extends  RecyclerView.ViewHolder {
         TextView title;
         TextView meaning;
         TextView verbtype;
@@ -69,22 +62,11 @@ public class FavoriteRecycleAdapter extends RecyclerView.Adapter<FavoriteRecycle
             meaning = (TextView) itemView.findViewById(R.id.textViewListMeaning);
             verbtype = (TextView) itemView.findViewById(R.id.textViewListVerbType);
 
-            itemView.setOnClickListener(this);
         }
 
-        @Override
-        public void onClick(View view) {
-            if(clickListener !=null)
-            {
-                clickListener.itemClicked(view,getPosition());
-            }
-        }
 
     }
 
-    public interface ClickListenerCardView {
-        public void itemClicked(View view, int position);
-    }
 }
 
 
