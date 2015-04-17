@@ -3,6 +3,7 @@ package com.finnishverbix.Fragment;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -10,11 +11,11 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 
@@ -26,6 +27,8 @@ import com.finnishverbix.FavoriteFragment.WordListAdapter;
 import com.finnishverbix.R;
 import com.finnishverbix.SQL.SqliteHandler;
 import com.finnishverbix.WordReviewActivity;
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.ViewTarget;
 
 import java.util.ArrayList;
 
@@ -49,6 +52,8 @@ public class FavoriteFragment extends Fragment  {
     RecyclerView recyclerView;
     private int swipe_position;
 
+    final String PREFS_NAME = "MyPrefsFile";
+    ShowcaseView sv;
     public FavoriteFragment() {
         // Required empty public constructor
     }
@@ -70,7 +75,36 @@ public class FavoriteFragment extends Fragment  {
         return rootView;
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        //CREATE SCHOWCASE VIEW
+       /* SharedPreferences settings = rootView.getContext().getSharedPreferences(PREFS_NAME,0);
+        if(settings.getBoolean("my_first_time_favorite",true)) {
+            createShowCaseView();
 
+            settings.edit().putBoolean("my_first_time_favorite", false).commit();
+        }*/
+    }
+
+    private void createShowCaseView() {
+        final RelativeLayout.LayoutParams lps = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lps.addRule(android.widget.RelativeLayout.ALIGN_PARENT_BOTTOM);
+        lps.addRule(android.widget.RelativeLayout.ALIGN_PARENT_LEFT);
+        int margin = ((Number) (getResources().getDisplayMetrics().density * 12)).intValue();
+        lps.setMargins(margin, margin, margin, margin);
+        //define targets
+        recyclerView  = (RecyclerView) rootView.findViewById(R.id.containerWordFavorite);
+
+        //Create showcase view
+        ViewTarget viewTarget = new ViewTarget(recyclerView);
+        new ShowcaseView.Builder(getActivity(), true)
+                .setTarget(viewTarget)
+                .setContentTitle("Word Cards")
+                .setContentText("Your favorite words are saved here.\n Click to the item to see more, \n Swipe to delete the item")
+                .setStyle(R.style.CustomShowcaseTheme3)
+                .build().setButtonPosition(lps);
+    }
 
     private class QueryDatabase extends AsyncTask<Void,Void,Void>{
         @Override
@@ -135,6 +169,13 @@ public class FavoriteFragment extends Fragment  {
                     singleItemIntent(position);
                 }
             }));
+            SharedPreferences settings = rootView.getContext().getSharedPreferences(PREFS_NAME,0);
+            if(settings.getBoolean("my_first_time_favorite",true)) {
+                createShowCaseView();
+
+                settings.edit().putBoolean("my_first_time_favorite", false).commit();
+            }
+           
 
             mProgressDialog.dismiss();
         }

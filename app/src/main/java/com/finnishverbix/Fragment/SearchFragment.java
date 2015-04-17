@@ -2,15 +2,23 @@ package com.finnishverbix.Fragment;
 
 
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.finnishverbix.FavoriteFragment.CustomExpandableListAdapter;
@@ -18,6 +26,10 @@ import com.finnishverbix.FavoriteFragment.WordItem;
 import com.finnishverbix.R;
 import com.finnishverbix.SQL.SqliteHandler;
 import com.gc.materialdesign.views.ButtonRectangle;
+import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.ActionViewTarget;
+import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -42,6 +54,9 @@ public class SearchFragment extends Fragment {
     SqliteHandler sqliteHandler;
     WordItem WordItem = null;
 
+    final String PREFS_NAME = "MyPrefsFile";
+
+    ShowcaseView sv;
     public SearchFragment() {
         // Required empty public constructor
     }
@@ -56,6 +71,24 @@ public class SearchFragment extends Fragment {
         btnSave = (FloatingActionButton) rootView.findViewById(R.id.fabSave);
         expandableListView = (ExpandableListView) rootView.findViewById(R.id.exapandableListView);
         edtTextSearch = (EditText) rootView.findViewById(R.id.editText);
+        RelativeLayout searchContainer = (RelativeLayout) rootView.findViewById(R.id.searchContainer);
+        searchContainer.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    if (edtTextSearch.isFocused()) {
+                        Rect outRect = new Rect();
+                        edtTextSearch.getGlobalVisibleRect(outRect);
+                        if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
+                            edtTextSearch.clearFocus();
+                            InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                        }
+                    }
+                }
+                return false;
+            }
+        });
 
         listHeader = new ArrayList<String>();
         listChild = new HashMap<String,String>();
@@ -69,7 +102,64 @@ public class SearchFragment extends Fragment {
             }
         });
 
+
+
         return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        //CREATE SCHOWCASE VIEW
+        SharedPreferences settings = rootView.getContext().getSharedPreferences(PREFS_NAME,0);
+        if(settings.getBoolean("my_first_time",true)) {
+            createShowCaseView();
+
+            settings.edit().putBoolean("my_first_time", false).commit();
+        }
+
+
+    }
+
+    private void createShowCaseView() {
+        //set the closing button
+        final RelativeLayout.LayoutParams lps = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        lps.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+        int margin = ((Number) (getResources().getDisplayMetrics().density * 12)).intValue();
+        lps.setMargins(margin, margin, margin, margin);
+        //define targets
+        final Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.app_bar);
+        btnSearch = (ButtonRectangle) rootView.findViewById(R.id.buttonSearch);
+        ViewTarget target = new ViewTarget(btnSearch);
+        //Create showcase view
+        sv = new ShowcaseView.Builder(getActivity(), true)
+                .setTarget(target)
+                .setContentTitle("Button Search")
+                .setContentText("Click here to find the search")
+                .setStyle(R.style.CustomShowcaseTheme2)
+                .setShowcaseEventListener(new OnShowcaseEventListener() {
+                    @Override
+                    public void onShowcaseViewHide(ShowcaseView showcaseView) {
+                    }
+
+                    @Override
+                    public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
+                        ViewTarget viewTarget = new ViewTarget(toolbar);
+                        new ShowcaseView.Builder(getActivity(), true)
+                                .setTarget(viewTarget)
+                                .setContentTitle("ToolBar")
+                                .setContentText("Left icon is Menu , the right icon is Help")
+                                .setStyle(R.style.CustomShowcaseTheme2)
+                                .build().setButtonPosition(lps);
+                    }
+
+                    @Override
+                    public void onShowcaseViewShow(ShowcaseView showcaseView) {
+                    }
+                })
+                .build();
+        sv.setButtonPosition(lps);
     }
 
     private class Searching extends AsyncTask<Void,Void,Void> {

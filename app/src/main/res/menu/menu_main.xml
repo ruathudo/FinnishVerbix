@@ -8,6 +8,7 @@
         android:title="HELP"
         android:orderInCategory="200"
         app:showAsAction="always"
+        android:actionViewClass="android.widget.ImageButton"
         android:icon="@drawable/ic_help_white_36dp" />
     <item
         android:id="@+id/add"

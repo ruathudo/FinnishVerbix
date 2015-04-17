@@ -32,4 +32,5 @@ dependencies {
     compile 'com.android.support:support-v4:22.0.0'
     compile 'me.drakeet.materialdialog:library:1.2.2'
     compile 'com.hudomju:swipe-to-dismiss-undo:1.0'
+    compile 'com.github.amlcurran.showcaseview:library:5.0.0'
 }
