@@ -1,5 +1,8 @@
 package com.finnishverbix;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
@@ -7,7 +10,9 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.RelativeLayout;
 
 import com.finnishverbix.NagvigationDrawer.NavigationDrawerFragment;
@@ -16,12 +21,19 @@ import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.ActionViewTarget;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
 
+import java.util.Calendar;
+
 
 public class MainActivity extends ActionBarActivity {
     private Toolbar toolbar;
     NavigationDrawerFragment navigationDrawerFragment;
 
-    ShowcaseView sv;
+    //Create an boardcast daily notification
+    AlarmManager alarmManager;
+    Intent alarmIntent;
+    PendingIntent pendingIntent;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,13 +51,29 @@ public class MainActivity extends ActionBarActivity {
         if(savedInstanceState == null){
             navigationDrawerFragment.selectItem(0);
         }
-        RelativeLayout.LayoutParams lps = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
-        lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        lps.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-        int margin = ((Number) (getResources().getDisplayMetrics().density * 12)).intValue();
-        lps.setMargins(margin, margin, margin, margin);
+
+        setAlarm();
+
+    }
+
+    public void setAlarm(){
 
 
+        Calendar alarmStartTime =  Calendar.getInstance();
+        alarmStartTime.set(Calendar.HOUR_OF_DAY, 7);
+        alarmStartTime.set(Calendar.MINUTE,39 );
+        alarmStartTime.set(Calendar.SECOND, 0);
+        alarmStartTime.set(Calendar.AM_PM, Calendar.AM);
+
+        //alarmStartTime.set(Calendar.DAY_OF_MONTH, alarmStartTime.get(Calendar.DAY_OF_MONTH));
+        alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarmIntent = new Intent(MainActivity.this, AlarmReceiver.class);
+        pendingIntent = PendingIntent.getBroadcast(MainActivity.this,0,alarmIntent,0);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmStartTime.getTimeInMillis(), getInterval(),pendingIntent);
+    }
+
+    private int getInterval() {
+        return 1* 24*60*60*1000; // day* hours * minutes* seconds * milliseconds
     }
 
     @Override

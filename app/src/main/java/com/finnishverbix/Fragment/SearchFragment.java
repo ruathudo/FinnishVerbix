@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,17 +21,23 @@ import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.finnishverbix.FavoriteFragment.CustomExpandableListAdapter;
 import com.finnishverbix.FavoriteFragment.WordItem;
 import com.finnishverbix.R;
 import com.finnishverbix.SQL.SqliteHandler;
+import com.finnishverbix.SearchFragmentSupplement.JSONfuntions;
 import com.gc.materialdesign.views.ButtonRectangle;
 import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.ActionViewTarget;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.melnykov.fab.FloatingActionButton;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,7 +52,7 @@ public class SearchFragment extends Fragment {
     ExpandableListView expandableListView;
     CustomExpandableListAdapter expandableListAdapter;
     List<String> listHeader;
-    HashMap<String,String> listChild;
+    HashMap<String, String> listChild;
 
     FloatingActionButton btnSave;
     ButtonRectangle btnSearch;
@@ -53,10 +60,15 @@ public class SearchFragment extends Fragment {
     private ProgressDialog mProgressDialog;
     SqliteHandler sqliteHandler;
     WordItem WordItem = null;
+    boolean wordFoundFromServer = false;
+    boolean wordFoundFromDB = false;
+    String e2, e3, e4, e5, e6, e7, e8, e9, e10, e11, e12, e13;
+
 
     final String PREFS_NAME = "MyPrefsFile";
 
     ShowcaseView sv;
+
     public SearchFragment() {
         // Required empty public constructor
     }
@@ -71,48 +83,63 @@ public class SearchFragment extends Fragment {
         btnSave = (FloatingActionButton) rootView.findViewById(R.id.fabSave);
         expandableListView = (ExpandableListView) rootView.findViewById(R.id.exapandableListView);
         edtTextSearch = (EditText) rootView.findViewById(R.id.editText);
+        InputMethodManager imm = (InputMethodManager) rootView.getContext().getSystemService(
+                Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(edtTextSearch.getWindowToken(), 0);
         RelativeLayout searchContainer = (RelativeLayout) rootView.findViewById(R.id.searchContainer);
-        searchContainer.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    if (edtTextSearch.isFocused()) {
-                        Rect outRect = new Rect();
-                        edtTextSearch.getGlobalVisibleRect(outRect);
-                        if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
-                            edtTextSearch.clearFocus();
-                            InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                        }
-                    }
-                }
-                return false;
-            }
-        });
 
         listHeader = new ArrayList<String>();
-        listChild = new HashMap<String,String>();
+        listChild = new HashMap<String, String>();
 
         sqliteHandler = new SqliteHandler(rootView.getContext());
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 new Searching().execute();
             }
         });
-
+        btnSave.setVisibility(View.VISIBLE);
+        btnSave.show();
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d("Saved button", "BUTTON CLICKED");
+                //Toast.makeText(rootView.getContext(),"Success Adding",Toast.LENGTH_LONG).show();
+                String insertQuery = "INSERT INTO FINNISH_WORDS(Verb,Meaning,Type,Present,Perfect," +
+                        "Imperfect,Pluperfect,Potential," +
+                        "PotentialPerfect,Conditional,Infinitive2,Infinitive3) values ('"
+                        + e2 + "','"
+                        + e3 + "','"
+                        + e4 + "','"
+                        + e5 + "','"
+                        + e6 + "','"
+                        + e7 + "','"
+                        + e8 + "','"
+                        + e9 + "','"
+                        + e10 + "','"
+                        + e11 + "','"
+                        + e12 + "','"
+                        + e13 + "')";
+                if (wordFoundFromServer && !wordFoundFromDB) {
+                    sqliteHandler.executeQuery(insertQuery);
+                    Log.d("Saved button", "BUTTON CLICKED");
+                    Toast.makeText(rootView.getContext(),"Success Adding",Toast.LENGTH_LONG).show();
+                }
+            }
+        });
 
 
         return rootView;
     }
 
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         //CREATE SCHOWCASE VIEW
-        SharedPreferences settings = rootView.getContext().getSharedPreferences(PREFS_NAME,0);
-        if(settings.getBoolean("my_first_time",true)) {
+
+        SharedPreferences settings = rootView.getContext().getSharedPreferences(PREFS_NAME, 0);
+        if (settings.getBoolean("my_first_time", true)) {
             createShowCaseView();
 
             settings.edit().putBoolean("my_first_time", false).commit();
@@ -162,7 +189,7 @@ public class SearchFragment extends Fragment {
         sv.setButtonPosition(lps);
     }
 
-    private class Searching extends AsyncTask<Void,Void,Void> {
+    private class Searching extends AsyncTask<Void, Void, Void> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -176,41 +203,42 @@ public class SearchFragment extends Fragment {
             // Show progressdialog
             mProgressDialog.show();
         }
+
         @Override
         protected Void doInBackground(Void... voids) {
             showList();
             return null;
         }
+
         @Override
         protected void onPostExecute(Void args) {
-            if(WordItem != null){
+            if (WordItem != null) {
                 prepareList();
 
                 TextView title = (TextView) rootView.findViewById(R.id.textViewResultHeader);
-                TextView mean = (TextView)rootView.findViewById(R.id.textViewMeaning);
-                TextView verbtype = (TextView)rootView.findViewById(R.id.textViewVerbtype);
+                TextView mean = (TextView) rootView.findViewById(R.id.textViewMeaning);
+                TextView verbtype = (TextView) rootView.findViewById(R.id.textViewVerbtype);
                 title.setText(WordItem.getVerb());
                 mean.setText(WordItem.getMeaning());
                 verbtype.setText(WordItem.getType());
 
 
-
-                expandableListAdapter = new CustomExpandableListAdapter(rootView.getContext(),listHeader,listChild);
+                expandableListAdapter = new CustomExpandableListAdapter(rootView.getContext(), listHeader, listChild);
                 expandableListView.setAdapter(expandableListAdapter);
 
                 edtTextSearch.setText("");
                 btnSave.setVisibility(View.VISIBLE);
                 btnSave.show();
-            }
-            else {
+            } else {
                 TextView title = (TextView) rootView.findViewById(R.id.textViewResultHeader);
                 title.setText("WORD NOT FOUND ! ");
                 listChild.clear();
                 listHeader.clear();
-                expandableListAdapter = new CustomExpandableListAdapter(rootView.getContext(),listHeader,listChild);
+                expandableListAdapter = new CustomExpandableListAdapter(rootView.getContext(), listHeader, listChild);
                 expandableListView.setAdapter(expandableListAdapter);
                 btnSave.setVisibility(View.VISIBLE);
                 btnSave.hide();
+
             }
             mProgressDialog.dismiss();
         }
@@ -218,9 +246,11 @@ public class SearchFragment extends Fragment {
 
     private void showList() {
 
-        String query = "SELECT * FROM FINNISH_WORDS WHERE Verb = '"+edtTextSearch.getText().toString().toLowerCase() + "';";
+        String query = "SELECT * FROM FINNISH_WORDS WHERE Verb = '" + edtTextSearch.getText().toString().toLowerCase() + "';";
         Cursor cursor = sqliteHandler.selectQuery(query);
-        if(cursor!=null && cursor.getCount()!= 0) {
+        if (cursor != null && cursor.getCount() != 0) {
+            wordFoundFromDB = true;
+            wordFoundFromServer = false;
             if (cursor.moveToFirst()) {
                 WordItem = new WordItem();
                 WordItem.setVerb(cursor.getString(cursor.getColumnIndex("Verb")));
@@ -237,9 +267,57 @@ public class SearchFragment extends Fragment {
                 WordItem.setInfinitive3(cursor.getString(cursor.getColumnIndex("Infinitive3")));
                 //DO EXPANDABLE VIEW;
             }
-        }else WordItem = null;
+        } else {
+            JSONObject jsonObject = JSONfuntions.getJSONfromURL("http://finnishverbixapi-env.elasticbeanstalk.com/json?word=" + edtTextSearch.getText().toString().toLowerCase());
+            if (!jsonObject.isNull("verb")) {
+                wordFoundFromServer = true;
+                wordFoundFromDB = false;
+                try {
+                    Log.d("Test JSON", "present " + jsonObject.get("verb").toString());
+                    JSONObject active = jsonObject.getJSONObject("active");
+                    JSONObject infinitive = jsonObject.getJSONObject("infinitive");
+                    Log.d("Test JSON", "present " + active.get("present"));
+                    WordItem = new WordItem();
+                    WordItem.setVerb(jsonObject.get("verb").toString());
+                    WordItem.setMeaning("");
+                    WordItem.setType("");
+                    WordItem.setPresent(active.get("present").toString());
+                    WordItem.setPerfect(active.get("Perfect").toString());
+                    WordItem.setImperfect(active.get("Imperfect").toString());
+                    WordItem.setPluperfect(active.get("pluperfect").toString());
+                    WordItem.setPotential(active.get("Potential").toString());
+                    WordItem.setPotentialperfect(active.get("conditional_perfect").toString());
+                    WordItem.setConditional(active.get("conditional").toString());
+                    WordItem.setInfinitive2(infinitive.get("infinitive2").toString());
+                    WordItem.setInfinitive3(infinitive.get("Infinitive3").toString());
+                    wordFoundFromServer = true;
+                    e2 = jsonObject.get("verb").toString();
+                    e3 = "";
+                    e4 = "";
+                    e5 = active.get("present").toString();
+                    e6 = active.get("Perfect").toString();
+                    e7 = active.get("Imperfect").toString();
+                    e8 = active.get("pluperfect").toString();
+                    e9 = active.get("Potential").toString();
+                    e10 = active.get("conditional_perfect").toString();
+                    e11 = active.get("conditional").toString();
+                    e12 = infinitive.get("infinitive2").toString();
+                    e13 = infinitive.get("Infinitive3").toString();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                WordItem = null;
+                wordFoundFromServer = false;
+                wordFoundFromDB = false;
+            }
+
+
+        }
         cursor.close();
     }
+
+
     private void prepareList() {
 
 
