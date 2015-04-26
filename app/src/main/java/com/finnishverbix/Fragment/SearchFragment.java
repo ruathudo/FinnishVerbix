@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Rect;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -63,7 +65,7 @@ public class SearchFragment extends Fragment {
     boolean wordFoundFromServer = false;
     boolean wordFoundFromDB = false;
     String e2, e3, e4, e5, e6, e7, e8, e9, e10, e11, e12, e13;
-
+    boolean hasNetworkConnection = true;
 
     final String PREFS_NAME = "MyPrefsFile";
 
@@ -124,6 +126,8 @@ public class SearchFragment extends Fragment {
                     sqliteHandler.executeQuery(insertQuery);
                     Log.d("Saved button", "BUTTON CLICKED");
                     Toast.makeText(rootView.getContext(),"Success Adding",Toast.LENGTH_LONG).show();
+                    wordFoundFromDB = true;
+                    wordFoundFromServer = false;
                 }
             }
         });
@@ -222,13 +226,15 @@ public class SearchFragment extends Fragment {
                 mean.setText(WordItem.getMeaning());
                 verbtype.setText(WordItem.getType());
 
-
                 expandableListAdapter = new CustomExpandableListAdapter(rootView.getContext(), listHeader, listChild);
                 expandableListView.setAdapter(expandableListAdapter);
 
                 edtTextSearch.setText("");
                 btnSave.setVisibility(View.VISIBLE);
-                btnSave.show();
+                if(wordFoundFromDB){
+                    btnSave.hide();
+                }
+                else btnSave.show();
             } else {
                 TextView title = (TextView) rootView.findViewById(R.id.textViewResultHeader);
                 title.setText("WORD NOT FOUND ! ");
@@ -238,6 +244,8 @@ public class SearchFragment extends Fragment {
                 expandableListView.setAdapter(expandableListAdapter);
                 btnSave.setVisibility(View.VISIBLE);
                 btnSave.hide();
+                if(!hasNetworkConnection)
+                    Toast.makeText(rootView.getContext(),"No network connection, please check the network connection",Toast.LENGTH_LONG).show();
 
             }
             mProgressDialog.dismiss();
@@ -268,55 +276,70 @@ public class SearchFragment extends Fragment {
                 //DO EXPANDABLE VIEW;
             }
         } else {
-            JSONObject jsonObject = JSONfuntions.getJSONfromURL("http://finnishverbixapi-env.elasticbeanstalk.com/json?word=" + edtTextSearch.getText().toString().toLowerCase());
-            if (!jsonObject.isNull("verb")) {
-                wordFoundFromServer = true;
-                wordFoundFromDB = false;
-                try {
-                    Log.d("Test JSON", "present " + jsonObject.get("verb").toString());
-                    JSONObject active = jsonObject.getJSONObject("active");
-                    JSONObject infinitive = jsonObject.getJSONObject("infinitive");
-                    Log.d("Test JSON", "present " + active.get("present"));
-                    WordItem = new WordItem();
-                    WordItem.setVerb(jsonObject.get("verb").toString());
-                    WordItem.setMeaning("");
-                    WordItem.setType("");
-                    WordItem.setPresent(active.get("present").toString());
-                    WordItem.setPerfect(active.get("Perfect").toString());
-                    WordItem.setImperfect(active.get("Imperfect").toString());
-                    WordItem.setPluperfect(active.get("pluperfect").toString());
-                    WordItem.setPotential(active.get("Potential").toString());
-                    WordItem.setPotentialperfect(active.get("conditional_perfect").toString());
-                    WordItem.setConditional(active.get("conditional").toString());
-                    WordItem.setInfinitive2(infinitive.get("infinitive2").toString());
-                    WordItem.setInfinitive3(infinitive.get("Infinitive3").toString());
+            if(isNetworkConnected()){
+                JSONObject jsonObject = JSONfuntions.getJSONfromURL("http://finnishverbixapi-env.elasticbeanstalk.com/json?word=" + edtTextSearch.getText().toString().toLowerCase());
+                if (!jsonObject.isNull("verb")) {
                     wordFoundFromServer = true;
-                    e2 = jsonObject.get("verb").toString();
-                    e3 = "";
-                    e4 = "";
-                    e5 = active.get("present").toString();
-                    e6 = active.get("Perfect").toString();
-                    e7 = active.get("Imperfect").toString();
-                    e8 = active.get("pluperfect").toString();
-                    e9 = active.get("Potential").toString();
-                    e10 = active.get("conditional_perfect").toString();
-                    e11 = active.get("conditional").toString();
-                    e12 = infinitive.get("infinitive2").toString();
-                    e13 = infinitive.get("Infinitive3").toString();
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    wordFoundFromDB = false;
+                    try {
+                        Log.d("Test JSON", "present " + jsonObject.get("verb").toString());
+                        JSONObject active = jsonObject.getJSONObject("active");
+                        JSONObject infinitive = jsonObject.getJSONObject("infinitive");
+                        Log.d("Test JSON", "present " + active.get("present"));
+                        WordItem = new WordItem();
+                        WordItem.setVerb(jsonObject.get("verb").toString());
+                        WordItem.setMeaning("");
+                        WordItem.setType("");
+                        WordItem.setPresent(active.get("present").toString());
+                        WordItem.setPerfect(active.get("Perfect").toString());
+                        WordItem.setImperfect(active.get("Imperfect").toString());
+                        WordItem.setPluperfect(active.get("pluperfect").toString());
+                        WordItem.setPotential(active.get("Potential").toString());
+                        WordItem.setPotentialperfect(active.get("conditional_perfect").toString());
+                        WordItem.setConditional(active.get("conditional").toString());
+                        WordItem.setInfinitive2(infinitive.get("infinitive2").toString());
+                        WordItem.setInfinitive3(infinitive.get("Infinitive3").toString());
+                        wordFoundFromServer = true;
+                        e2 = jsonObject.get("verb").toString();
+                        e3 = "";
+                        e4 = "";
+                        e5 = active.get("present").toString();
+                        e6 = active.get("Perfect").toString();
+                        e7 = active.get("Imperfect").toString();
+                        e8 = active.get("pluperfect").toString();
+                        e9 = active.get("Potential").toString();
+                        e10 = active.get("conditional_perfect").toString();
+                        e11 = active.get("conditional").toString();
+                        e12 = infinitive.get("infinitive2").toString();
+                        e13 = infinitive.get("Infinitive3").toString();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    WordItem = null;
+                    wordFoundFromServer = false;
+                    wordFoundFromDB = false;
                 }
-            } else {
+            }
+            else {
                 WordItem = null;
                 wordFoundFromServer = false;
                 wordFoundFromDB = false;
+                hasNetworkConnection = false;
+
             }
+
 
 
         }
         cursor.close();
     }
 
+    public boolean isNetworkConnected() {
+        final ConnectivityManager conMgr = (ConnectivityManager) rootView.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        final NetworkInfo activeNetwork = conMgr.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.getState() == NetworkInfo.State.CONNECTED;
+    }
 
     private void prepareList() {
 
