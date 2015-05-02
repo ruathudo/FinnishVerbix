@@ -52,7 +52,7 @@ public class MainActivity extends ActionBarActivity {
             navigationDrawerFragment.selectItem(0);
         }
 
-        setAlarm();
+        //setAlarm();
 
     }
 
