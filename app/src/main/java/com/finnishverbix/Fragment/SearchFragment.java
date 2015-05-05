@@ -323,7 +323,7 @@ public class SearchFragment extends Fragment {
                         WordItem.setPotential(active.get("Potential").toString());
                         WordItem.setPotentialperfect(active.get("conditional_perfect").toString());
                         WordItem.setConditional(active.get("conditional").toString());
-                        WordItem.setInfinitive2(infinitive.get("infinitive2").toString());
+                        WordItem.setInfinitive2(infinitive.get("Infinitive2").toString());
                         WordItem.setInfinitive3(infinitive.get("Infinitive3").toString());
                         wordFoundFromServer = true;
                         e2 = jsonObject.get("verb").toString();
@@ -336,7 +336,7 @@ public class SearchFragment extends Fragment {
                         e9 = active.get("Potential").toString();
                         e10 = active.get("conditional_perfect").toString();
                         e11 = active.get("conditional").toString();
-                        e12 = infinitive.get("infinitive2").toString();
+                        e12 = infinitive.get("Infinitive2").toString();
                         e13 = infinitive.get("Infinitive3").toString();
                     } catch (JSONException e) {
                         e.printStackTrace();
