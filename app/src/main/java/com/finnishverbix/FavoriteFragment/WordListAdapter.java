@@ -14,7 +14,7 @@ import com.finnishverbix.WordReviewActivity;
 import java.util.ArrayList;
 
 /**
- * Created by longtran on 4/15/2015.
+ * A CLASS FOR TESTING, NOT IN USE ANYMORE
  */
 public class WordListAdapter extends BaseAdapter {
     Context context;

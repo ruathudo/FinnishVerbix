@@ -6,7 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 /**
- * Created by longtran on 4/11/2015.
+ * SQLite Handling Class
+ * Include : UPDATE, DELETE, SEARCH ...
  */
 //Class for handling sqlite such as querying, insert, delete
 public class SqliteHandler {
@@ -37,6 +38,7 @@ public class SqliteHandler {
         }
     }
 
+    //For searching
     public Cursor selectQuery(String query){
         Cursor c1 = null;
         try {

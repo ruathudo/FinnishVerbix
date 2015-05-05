@@ -1,7 +1,6 @@
 package com.finnishverbix;
 
 import android.content.Intent;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -17,28 +16,41 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Reviewing word when click to an item from the Favorite Menu.
+ */
 
 public class WordReviewActivity extends ActionBarActivity {
+    //Set Up the View.
     Toolbar toolbar;
-    String verb,meaning,type,present,perfect,imperfect,pluperfect,potential,potentialperfect,conditional,infinitive2,infinitive3;
-
     ExpandableListView expandableListView;
     CustomExpandableListAdapter expandableListAdapter;
+
+    //Variable for making the expandable list view.
     List<String> listHeader;
     HashMap<String,String> listChild;
+
+    //Variables from intent
+    String verb,meaning,type,present,perfect,imperfect,pluperfect,potential,potentialperfect,conditional,infinitive2,infinitive3;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_word_review);
+        //Set up toolbar.
         toolbar = (Toolbar) findViewById(R.id.app_bar_sub2);
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        //Retrieving data from the intent.
         gettingDataFromIntent();
+        //Set up expandable list view
         expandableListView = (ExpandableListView) findViewById(R.id.exapandableListView1);
-        //SET TEXT FOR HEADER LAYOUT
+
+        //SET HEADER LAYOUT
         TextView title = (TextView) findViewById(R.id.textViewReviewHeader);
         TextView mean = (TextView)findViewById(R.id.textViewMeaning2);
         TextView verbtype = (TextView)findViewById(R.id.textViewVerbtype2);
@@ -46,6 +58,7 @@ public class WordReviewActivity extends ActionBarActivity {
         mean.setText(meaning);
         verbtype.setText(type);
 
+        //Make the expandable list
         prepareList();
         expandableListAdapter = new CustomExpandableListAdapter(this,listHeader,listChild);
         expandableListView.setAdapter(expandableListAdapter);
@@ -53,6 +66,10 @@ public class WordReviewActivity extends ActionBarActivity {
 
     }
 
+    /**
+     * prepare the list by adding the header of the list
+     * adding the data from the intent.
+     */
     private void prepareList() {
         listHeader = new ArrayList<String>();
         listChild = new HashMap<String,String>();
@@ -105,6 +122,9 @@ public class WordReviewActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Receiving the data from intent and add them to some initialized variables.
+     */
     public void gettingDataFromIntent() {
         Intent intent = getIntent();
         verb = intent.getStringExtra("Verb");

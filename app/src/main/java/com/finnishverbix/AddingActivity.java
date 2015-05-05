@@ -14,23 +14,31 @@ import android.widget.Toast;
 
 import com.finnishverbix.SQL.SqliteHandler;
 
-//ONLY FOR TESTING
+/**
+ * This class is only for testing, class is used for adding the verb to the database
+ */
 
 public class AddingActivity extends ActionBarActivity {
+    //Variables of the view
     Toolbar toolbar;
+    Button saved;
     EditText edit2,edit3,edit4,edit5,edit6,edit7,edit8,edit9, edit10,edit11,edit12,edit13;
+
+    //Variables of database
     SqliteHandler sqliteHandler;
 
-    Button saved;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_adding);
+        //Set up the toolbar
         toolbar = (Toolbar) findViewById(R.id.app_bar_sub);
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        //Initialize the database and map the view.
         sqliteHandler = new SqliteHandler(this);
         edit2 = (EditText) findViewById(R.id.editText2);
         edit3 = (EditText) findViewById(R.id.editText3);
@@ -45,11 +53,12 @@ public class AddingActivity extends ActionBarActivity {
         edit12 = (EditText) findViewById(R.id.editText12);
         edit13 = (EditText) findViewById(R.id.editText13);
 
+        //Initialize the "Save Button" and handle the click event.
         saved = (Button) findViewById(R.id.buttonAddNew);
         saved.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                //Get text from the edit text.
                 String e2 = edit2.getText().toString();
                 String e3 = edit3.getText().toString();
                 String e4 = edit4.getText().toString();
@@ -63,6 +72,7 @@ public class AddingActivity extends ActionBarActivity {
                 String e12 = edit12.getText().toString();
                 String e13 = edit13.getText().toString();
 
+                //Create a Query.
                 String insertQuery = "INSERT INTO FINNISH_WORDS(Verb,Meaning,Type,Present,Perfect," +
                         "Imperfect,Pluperfect,Potential," +
                         "PotentialPerfect,Conditional,Infinitive2,Infinitive3) values ('"
@@ -80,7 +90,7 @@ public class AddingActivity extends ActionBarActivity {
                         + e13 + "')";
 
                 sqliteHandler.executeQuery(insertQuery);
-
+                //Reset the Edit Texts
                 edit2.setText("");
                 edit3.setText("");
                 edit4.setText("");
@@ -93,7 +103,8 @@ public class AddingActivity extends ActionBarActivity {
                 edit11.setText("");
                 edit12.setText("");
                 edit13.setText("");
-                //Log.d("Perfect and imperfect", e6 + e7);
+
+                //Notify user of suceeding
                 Toast.makeText(getApplicationContext(),"Success Adding",Toast.LENGTH_LONG).show();
             }
         });
@@ -108,6 +119,10 @@ public class AddingActivity extends ActionBarActivity {
         return true;
     }
 
+
+    /**
+     * Handling the Home/Up button for turning back to the main activity.
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will

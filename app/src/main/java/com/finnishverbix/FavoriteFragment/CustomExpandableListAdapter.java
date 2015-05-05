@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by longtran on 4/15/2015.
+ * Using in Word Review activity.
  */
 public class CustomExpandableListAdapter extends BaseExpandableListAdapter {
 

@@ -26,15 +26,18 @@ import java.util.Calendar;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * A Setting Fragment.
  */
 public class SettingFragment extends Fragment {
+    View rootView;
+
+    //items for time setting
     CheckBox checkBoxSetTime ;
     TimePicker timePicker;
-    View rootView;
     Button btnTimeSetting;
     TimePickerDialog timePickerDialog;
     Calendar calSet;
+
 
     //Create an boardcast daily notification
     AlarmManager alarmManager;
@@ -50,19 +53,20 @@ public class SettingFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_setting, container, false);
+        //Mapping the variable with the view
         checkBoxSetTime = (CheckBox) rootView.findViewById(R.id.checkBox);
-        //timePicker = (TimePicker) rootView.findViewById(R.id.timePicker);
         btnTimeSetting = (Button) rootView.findViewById(R.id.buttonTime);
 
         final boolean isChecked = load();
+        //Handling the time is set
         checkBoxSetTime.setChecked(isChecked);
         checkBoxSetTime.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 save(isChecked);
-
             }
         });
+        //handling the button setting time.
         btnTimeSetting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -73,18 +77,21 @@ public class SettingFragment extends Fragment {
         return rootView;
     }
 
+    //Open the time picker dialog and set time here.
     private void openTimePickerDialog(boolean b) {
         final Calendar calendar = Calendar.getInstance();
+        //Time picker dialog
         timePickerDialog = new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int hour, int minute) {
                 Calendar calNow = Calendar.getInstance();
                  calSet= (Calendar) calNow.clone();
-
+                //Set time
                 calSet.set(Calendar.HOUR_OF_DAY,hour);
                 calSet.set(Calendar.MINUTE,minute);
                 calSet.set(Calendar.SECOND,0);
                 calSet.set(Calendar.MILLISECOND,0);
+                //Set alarm
                 alarmManager = (AlarmManager) rootView.getContext().getSystemService(Context.ALARM_SERVICE);
                 alarmIntent = new Intent(getActivity(), AlarmReceiver.class);
                 pendingIntent = PendingIntent.getBroadcast(getActivity(), 0, alarmIntent, 0);
@@ -101,22 +108,7 @@ public class SettingFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-//        setAlarm();
-    }
-    public void setAlarm(){
 
-
-        Calendar alarmStartTime =  Calendar.getInstance();
-        alarmStartTime.set(Calendar.HOUR_OF_DAY, timePicker.getCurrentHour());
-        alarmStartTime.set(Calendar.MINUTE,timePicker.getCurrentMinute() );
-        alarmStartTime.set(Calendar.SECOND, 0);
-
-
-        //alarmStartTime.set(Calendar.DAY_OF_MONTH, alarmStartTime.get(Calendar.DAY_OF_MONTH));
-        alarmManager = (AlarmManager) rootView.getContext().getSystemService(Context.ALARM_SERVICE);
-        alarmIntent = new Intent(getActivity(), AlarmReceiver.class);
-        pendingIntent = PendingIntent.getBroadcast(getActivity(), 0, alarmIntent, 0);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmStartTime.getTimeInMillis(), getInterval(),pendingIntent);
     }
 
     private int getInterval() {
@@ -127,9 +119,6 @@ public class SettingFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-       /* if(savedInstanceState != null) {
-            checkBoxSetTime.setChecked(savedInstanceState.getBoolean("IsCheckedBox"));
-        }*/
     }
 
 
@@ -150,6 +139,7 @@ public class SettingFragment extends Fragment {
     public void onResume() {
         super.onResume();
     }
+    //Save the status of the check box even the app is closed
     private void save(final boolean isChecked) {
 
         SharedPreferences sharedPreferences = getActivity().getPreferences(Activity.MODE_PRIVATE);
@@ -157,7 +147,7 @@ public class SettingFragment extends Fragment {
         editor.putBoolean("check", isChecked);
         editor.commit();
     }
-
+    // Load the status of the check box.
     private boolean load() {
         SharedPreferences sharedPreferences = getActivity().getPreferences(Activity.MODE_PRIVATE);
         return sharedPreferences.getBoolean("check", false);

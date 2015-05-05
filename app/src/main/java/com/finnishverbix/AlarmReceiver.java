@@ -8,13 +8,14 @@ import android.content.Intent;
 import android.util.Log;
 
 /**
- * Created by longtran on 4/18/2015.
+ * The class create a broadcast receiver to start the service.
  */
 public class AlarmReceiver extends BroadcastReceiver {
-    NotificationManager notificationManager;
+
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        //Create an intent to start up the service.
         Intent service1 = new Intent(context,AlarmService.class);
         context.startService(service1);
         Log.d("ALARM RECEIVER","start service" );

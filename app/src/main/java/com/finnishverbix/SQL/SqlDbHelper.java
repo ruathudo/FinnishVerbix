@@ -5,12 +5,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 /**
- * Created by longtran on 4/11/2015.
+ * A Class of creating database for the application
  */
 //A Class for creating SQLITE DATABASE
 public class SqlDbHelper extends SQLiteOpenHelper {
 
-    //DECLARE VARIABLES
+    //DECLARE VARIABLES , Make a table name, columns.
     public static final String DATABASE_TABLE =  "FINNISH_WORDS";
     public static final String COLUMN_0 = "id";
     public static final String COLUMN_1 = "Verb";
@@ -28,6 +28,7 @@ public class SqlDbHelper extends SQLiteOpenHelper {
 
 
     //CREATE SCRIPTS
+    //SET UP THE DATABASE
     public static final String SCRIPT_CREATE_DATABASE = "create table "+ DATABASE_TABLE + " ("
             + COLUMN_0 +" integer primary key  autoincrement, "
             + COLUMN_1 +" text not null, "
@@ -49,11 +50,13 @@ public class SqlDbHelper extends SQLiteOpenHelper {
 
     }
 
+    //CREATE A DABASE HERE
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(SCRIPT_CREATE_DATABASE);
     }
 
+    //UPGRADE A DATABASE
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE);

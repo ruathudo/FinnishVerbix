@@ -15,7 +15,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 /**
- * Created by longtran on 4/10/2015.
+ *  A Class of Setting up the connection, and request the data from the server..
  */
 public class JSONfuntions {
     public static JSONObject getJSONfromURL(String url) {
@@ -35,7 +35,7 @@ public class JSONfuntions {
             Log.e("log_tag", "Error in http connection " + e.toString());
         }
 
-        // Convert response to string
+        // Convert response to string.
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(
                     is, "UTF-8"), 8);
@@ -50,6 +50,7 @@ public class JSONfuntions {
             Log.e("log_tag", "Error converting result " + e.toString());
         }
 
+        //Convert to a json array to handle the content of json file easier later.
         try {
 
             jArray = new JSONObject(result);

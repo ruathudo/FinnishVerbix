@@ -1,7 +1,8 @@
 package com.finnishverbix.NagvigationDrawer;
 
 /**
- * Created by longtran on 4/15/2015.
+ * A class of a navigation drawer item
+ * Include : icon and title.
  */
 public class NavigationDrawerItem {
     int iconId;

@@ -46,19 +46,23 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Search Fragment Class - The main fragment
  */
 public class SearchFragment extends Fragment {
 
     View rootView;
+    //Expandable list view variables
     ExpandableListView expandableListView;
     CustomExpandableListAdapter expandableListAdapter;
     List<String> listHeader;
     HashMap<String, String> listChild;
 
+    //Searching View variables
     FloatingActionButton btnSave;
     ButtonRectangle btnSearch;
     EditText edtTextSearch;
+
+    //Searching handler variables.
     private ProgressDialog mProgressDialog;
     SqliteHandler sqliteHandler;
     WordItem WordItem = null;
@@ -81,19 +85,25 @@ public class SearchFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_search, container, false);
+        //Initialize some items in the view
         btnSearch = (ButtonRectangle) rootView.findViewById(R.id.buttonSearch);
         btnSave = (FloatingActionButton) rootView.findViewById(R.id.fabSave);
         expandableListView = (ExpandableListView) rootView.findViewById(R.id.exapandableListView);
         edtTextSearch = (EditText) rootView.findViewById(R.id.editText);
+
+        //For not focusing on the edit text.  -- not succeed.
         InputMethodManager imm = (InputMethodManager) rootView.getContext().getSystemService(
                 Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(edtTextSearch.getWindowToken(), 0);
         RelativeLayout searchContainer = (RelativeLayout) rootView.findViewById(R.id.searchContainer);
 
+        //Inititialize list
         listHeader = new ArrayList<String>();
         listChild = new HashMap<String, String>();
 
+        //Create sqlite handler
         sqliteHandler = new SqliteHandler(rootView.getContext());
+        //Handle search button clicked
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -102,11 +112,12 @@ public class SearchFragment extends Fragment {
         });
         btnSave.setVisibility(View.VISIBLE);
         btnSave.show();
+        //Handle saved button clicked
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.d("Saved button", "BUTTON CLICKED");
-                //Toast.makeText(rootView.getContext(),"Success Adding",Toast.LENGTH_LONG).show();
+                //Running an insert query
                 String insertQuery = "INSERT INTO FINNISH_WORDS(Verb,Meaning,Type,Present,Perfect," +
                         "Imperfect,Pluperfect,Potential," +
                         "PotentialPerfect,Conditional,Infinitive2,Infinitive3) values ('"
@@ -122,10 +133,12 @@ public class SearchFragment extends Fragment {
                         + e11 + "','"
                         + e12 + "','"
                         + e13 + "')";
+                //Decide to add to the database or not
+                // If the word is already in the database then NOT.
                 if (wordFoundFromServer && !wordFoundFromDB) {
                     sqliteHandler.executeQuery(insertQuery);
                     Log.d("Saved button", "BUTTON CLICKED");
-                    Toast.makeText(rootView.getContext(),"Success Adding",Toast.LENGTH_LONG).show();
+                    Toast.makeText(rootView.getContext(), "Success Adding", Toast.LENGTH_LONG).show();
                     wordFoundFromDB = true;
                     wordFoundFromServer = false;
                 }
@@ -140,7 +153,7 @@ public class SearchFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        //CREATE SCHOWCASE VIEW
+        //CREATE SCHOWCASE VIEW AND ONLY RUN ON THE FIRST TIME
 
         SharedPreferences settings = rootView.getContext().getSharedPreferences(PREFS_NAME, 0);
         if (settings.getBoolean("my_first_time", true)) {
@@ -152,6 +165,7 @@ public class SearchFragment extends Fragment {
 
     }
 
+    //SHOWCASE VIEW
     private void createShowCaseView() {
         //set the closing button
         final RelativeLayout.LayoutParams lps = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -176,6 +190,7 @@ public class SearchFragment extends Fragment {
 
                     @Override
                     public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
+                        //Another showcase  view.
                         ViewTarget viewTarget = new ViewTarget(toolbar);
                         new ShowcaseView.Builder(getActivity(), true)
                                 .setTarget(viewTarget)
@@ -193,7 +208,9 @@ public class SearchFragment extends Fragment {
         sv.setButtonPosition(lps);
     }
 
+    //Running the searching task in a differnt thread / background
     private class Searching extends AsyncTask<Void, Void, Void> {
+        //Before running
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -208,17 +225,19 @@ public class SearchFragment extends Fragment {
             mProgressDialog.show();
         }
 
+        //When running
         @Override
         protected Void doInBackground(Void... voids) {
             showList();
             return null;
         }
 
+        //After running
         @Override
         protected void onPostExecute(Void args) {
             if (WordItem != null) {
                 prepareList();
-
+                //Create View result
                 TextView title = (TextView) rootView.findViewById(R.id.textViewResultHeader);
                 TextView mean = (TextView) rootView.findViewById(R.id.textViewMeaning);
                 TextView verbtype = (TextView) rootView.findViewById(R.id.textViewVerbtype);
@@ -226,16 +245,17 @@ public class SearchFragment extends Fragment {
                 mean.setText(WordItem.getMeaning());
                 verbtype.setText(WordItem.getType());
 
+                //Set expandable list
                 expandableListAdapter = new CustomExpandableListAdapter(rootView.getContext(), listHeader, listChild);
                 expandableListView.setAdapter(expandableListAdapter);
 
                 edtTextSearch.setText("");
                 btnSave.setVisibility(View.VISIBLE);
-                if(wordFoundFromDB){
+                if (wordFoundFromDB) {
                     btnSave.hide();
-                }
-                else btnSave.show();
-            } else {
+                } else btnSave.show();
+            } else { // IF Does not find the word then
+                //Clear the previous result, show "WORD NOT FOUND"
                 TextView title = (TextView) rootView.findViewById(R.id.textViewResultHeader);
                 title.setText("WORD NOT FOUND ! ");
                 listChild.clear();
@@ -244,16 +264,19 @@ public class SearchFragment extends Fragment {
                 expandableListView.setAdapter(expandableListAdapter);
                 btnSave.setVisibility(View.VISIBLE);
                 btnSave.hide();
-                if(!hasNetworkConnection)
-                    Toast.makeText(rootView.getContext(),"No network connection, please check the network connection",Toast.LENGTH_LONG).show();
+
+                if (!hasNetworkConnection)
+                    Toast.makeText(rootView.getContext(), "No network connection, please check the network connection", Toast.LENGTH_LONG).show();
 
             }
             mProgressDialog.dismiss();
         }
     }
 
+    //Searching
     private void showList() {
 
+        //First search in the database
         String query = "SELECT * FROM FINNISH_WORDS WHERE Verb = '" + edtTextSearch.getText().toString().toLowerCase() + "';";
         Cursor cursor = sqliteHandler.selectQuery(query);
         if (cursor != null && cursor.getCount() != 0) {
@@ -275,13 +298,16 @@ public class SearchFragment extends Fragment {
                 WordItem.setInfinitive3(cursor.getString(cursor.getColumnIndex("Infinitive3")));
                 //DO EXPANDABLE VIEW;
             }
-        } else {
-            if(isNetworkConnected()){
+
+        } else { // if not found then request from serveer
+            if (isNetworkConnected()) { /// check the interneet connection first
+                //Getting the json from the server
                 JSONObject jsonObject = JSONfuntions.getJSONfromURL("http://finnishverbixapi-env.elasticbeanstalk.com/json?word=" + edtTextSearch.getText().toString().toLowerCase());
                 if (!jsonObject.isNull("verb")) {
                     wordFoundFromServer = true;
                     wordFoundFromDB = false;
                     try {
+                        //Extracting json and saving the content to WordItem
                         Log.d("Test JSON", "present " + jsonObject.get("verb").toString());
                         JSONObject active = jsonObject.getJSONObject("active");
                         JSONObject infinitive = jsonObject.getJSONObject("infinitive");
@@ -320,27 +346,24 @@ public class SearchFragment extends Fragment {
                     wordFoundFromServer = false;
                     wordFoundFromDB = false;
                 }
-            }
-            else {
+            } else {
                 WordItem = null;
                 wordFoundFromServer = false;
                 wordFoundFromDB = false;
                 hasNetworkConnection = false;
-
             }
-
-
-
         }
         cursor.close();
     }
 
+    //CHECK IF THERE IS INTERNET CONNECTION
     public boolean isNetworkConnected() {
         final ConnectivityManager conMgr = (ConnectivityManager) rootView.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         final NetworkInfo activeNetwork = conMgr.getActiveNetworkInfo();
         return activeNetwork != null && activeNetwork.getState() == NetworkInfo.State.CONNECTED;
     }
 
+    //PREPARE FOR THE EXPANDABLE LIST
     private void prepareList() {
 
 

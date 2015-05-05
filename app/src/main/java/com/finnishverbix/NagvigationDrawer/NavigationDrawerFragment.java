@@ -35,14 +35,14 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
     //create a tag of remembering the first time opens navigation drawer
     public static final String PREF_FILE_NAME = "pref";
     public static final String KEY_USER_LEARNED_DRAWER = "user_learned_drawer";
+    private boolean mUserLearnedDrawer;
+    private boolean mFromSavedInstanceState;
 
+    //Variable for the drawer
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
     private NavigationDrawerAdapter mDrawerAdapter;
-
     private RecyclerView recyclerView;
-    private boolean mUserLearnedDrawer;
-    private boolean mFromSavedInstanceState;
     private View containerView;
 
     public NavigationDrawerFragment() {
@@ -52,6 +52,7 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Tell the apps that the user already know how to use the drawer
         mUserLearnedDrawer = Boolean.valueOf(readFromPreferences(getActivity(),KEY_USER_LEARNED_DRAWER,"false"));
         if(savedInstanceState != null){
             mFromSavedInstanceState = true;
@@ -66,15 +67,17 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
 
         //Initialize the recyclerView
         recyclerView = (RecyclerView) navigationLayout.findViewById(R.id.drawerList);
+        //Set up the adapter.
         mDrawerAdapter = new NavigationDrawerAdapter(getActivity(),getData());
         mDrawerAdapter.setClickListener(this);
-
+        //Set the recycler view
         recyclerView.setAdapter(mDrawerAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         return navigationLayout;
     }
 
+    //Make a list of navigation drawer item
     private List<NavigationDrawerItem> getData() {
         List<NavigationDrawerItem> itemList = new ArrayList<NavigationDrawerItem>();
         itemList.add(new NavigationDrawerItem(R.drawable.ic_search_black_24dp, "Search"));
@@ -91,10 +94,13 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
     public void setUp(int fragmentID, DrawerLayout drawerLayout, final Toolbar toolbar) {
         containerView = getActivity().findViewById(fragmentID);
         mDrawerLayout = drawerLayout;
+        //Handling the action opening and closing
         mDrawerToggle = new ActionBarDrawerToggle(getActivity(),drawerLayout,toolbar,R.string.drawer_open,R.string.drawer_close){
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
+                //When the drawer opened in the first time -> user learned drawer, -> set variable = true and saved
+                //so that the drawer will not open automatically when opening the app.
                 if(!mUserLearnedDrawer){
                     mUserLearnedDrawer = true;
                     saveToPreferences(getActivity(),KEY_USER_LEARNED_DRAWER,mUserLearnedDrawer+"");
@@ -116,6 +122,7 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
                 super.onDrawerSlide(drawerView, slideOffset);
             }
         };
+        //Open drawer on the first time.
         if(mUserLearnedDrawer == false && !mFromSavedInstanceState){
             mDrawerLayout.openDrawer(containerView);
         }
@@ -127,6 +134,7 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
             }
         });
     }
+
     // FOR NOTIFYING USER OF DRAWER FROM THE FIRST TIME
     public static void saveToPreferences(Context context, String preferenceName, String preferenceValue){
         SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_FILE_NAME,Context.MODE_PRIVATE);
@@ -140,36 +148,44 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
     }
 
 
-    //ITEM CLICKED
+    //ITEM CLICKED HANDLER
     public void selectItem(int position){
         Fragment fragment = null;
         FragmentManager fragmentManager = getFragmentManager();
         switch (position){
             case 0:
+                //select Search fragment
                 fragment = new SearchFragment();
 
                 break;
             case 1:
+                //select favorite fragment
                 fragment = new FavoriteFragment();
                 break;
             case 2:
+                //select help fragment
                 fragment = new HelpFragment();
                 break;
             case 3:
+                //select setting fragment
                 fragment = new SettingFragment();
                 break;
             case 4:
+                //select about fragment
                 fragment = new AboutFragment();
             default:
                 break;
 
         }
+        //Change the frame that is selected
         fragmentManager.beginTransaction().replace(R.id.content_frame,fragment).commit();
+        //after view changed, close the drawer.
         mDrawerLayout.closeDrawer(containerView);
     }
+    //implement the item clicked from the adapter
     @Override
     public void itemClicked(View view, int position) {
         selectItem(position);
     }
-    // END 2 methods
+
 }

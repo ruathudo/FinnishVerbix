@@ -1,6 +1,5 @@
 package com.finnishverbix.NagvigationDrawer;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,9 +14,11 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Created by longtran on 4/15/2015.
+ * Adapter of navigation drawer
+ * Include : the list of navigation drawer item.
  */
 public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDrawerAdapter.MyCustomViewHolder> {
+
 
     private LayoutInflater inflater;
     List<NavigationDrawerItem> drawerItemList = Collections.emptyList();
@@ -34,6 +35,7 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
     @Override
     public MyCustomViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         //inflate drawerItem
+        //Display the item to the navigation drawer.
         View view_item = inflater.inflate(R.layout.navigation_drawer_item,parent,false);
         MyCustomViewHolder holder = new MyCustomViewHolder(view_item);
         return holder;
@@ -41,7 +43,7 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
 
     @Override
     public void onBindViewHolder(MyCustomViewHolder holder, int position) {
-        //Set each of the item
+        //Set each of the item in the navigation drawer.
         NavigationDrawerItem currentItem = drawerItemList.get(position);
         holder.icon.setImageResource(currentItem.iconId);
         holder.title.setText(currentItem.title);
@@ -55,6 +57,7 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
         this.clickListener = clickListener;
     }
 
+    //A subclass for setting the navigation drawer item
     public class MyCustomViewHolder extends  RecyclerView.ViewHolder implements  View.OnClickListener{
         TextView title;
         ImageView icon;
@@ -64,13 +67,16 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
             super(itemView);
             title = (TextView) itemView.findViewById(R.id.drawer_item_title);
             icon = (ImageView) itemView.findViewById(R.id.drawer_item_icon);
+            //Set the item clickable and handle the click
             itemView.setOnClickListener(this);
         }
 
+        //Handling the click
         @Override
         public void onClick(View view) {
             if(clickListener !=null)
             {
+                //Opening other fragment based on the position
                 clickListener.itemClicked(view,getPosition());
             }
         }

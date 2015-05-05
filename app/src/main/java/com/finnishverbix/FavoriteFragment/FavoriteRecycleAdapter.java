@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Created by longtran on 4/16/2015.
+ * A Recycler Adapter for Favorite Fragment Recycler View.
  */
 public class FavoriteRecycleAdapter extends RecyclerView.Adapter<FavoriteRecycleAdapter.MyFavoriteViewHolder> {
 
@@ -23,12 +23,14 @@ public class FavoriteRecycleAdapter extends RecyclerView.Adapter<FavoriteRecycle
     List<WordItem> wordItems = Collections.emptyList(); // to make sure the list is empty
     Context context;
 
+    //CONSTRUCTOR
     public FavoriteRecycleAdapter( Context context,List<WordItem> wordItems) {
         inflater = LayoutInflater.from(context);
         this.wordItems = wordItems;
         this.context = context;
     }
 
+    //VIEW HOLDER TO INFLATE THE ITEMS TO THE VIEW
     @Override
     public MyFavoriteViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view_item = inflater.inflate(R.layout.favorite_list_item,parent,false);
@@ -37,6 +39,7 @@ public class FavoriteRecycleAdapter extends RecyclerView.Adapter<FavoriteRecycle
         return holder;
     }
 
+    //BIND THe ITEM TO THE VIEW
     @Override
     public void onBindViewHolder(MyFavoriteViewHolder holder, int position) {
         WordItem currentItem = wordItems.get(position);
@@ -50,7 +53,7 @@ public class FavoriteRecycleAdapter extends RecyclerView.Adapter<FavoriteRecycle
         return wordItems.size();
     }
 
-
+    //subclass to process the items.
     public class MyFavoriteViewHolder extends  RecyclerView.ViewHolder {
         TextView title;
         TextView meaning;

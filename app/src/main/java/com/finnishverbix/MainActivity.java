@@ -10,25 +10,20 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.RelativeLayout;
+
 
 import com.finnishverbix.NagvigationDrawer.NavigationDrawerFragment;
-import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
-import com.github.amlcurran.showcaseview.ShowcaseView;
-import com.github.amlcurran.showcaseview.targets.ActionViewTarget;
-import com.github.amlcurran.showcaseview.targets.ViewTarget;
+
 
 import java.util.Calendar;
 
 
 public class MainActivity extends ActionBarActivity {
+    //----Create the variable for the navigation drawer and toolbar ---//
     private Toolbar toolbar;
     NavigationDrawerFragment navigationDrawerFragment;
 
-    //Create an boardcast daily notification
+    //Create an boardcast daily notification variable.
     AlarmManager alarmManager;
     Intent alarmIntent;
     PendingIntent pendingIntent;
@@ -76,25 +71,26 @@ public class MainActivity extends ActionBarActivity {
         return 1* 24*60*60*1000; // day* hours * minutes* seconds * milliseconds
     }
 
+    //--- OPTION MENU --- //
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
-
+    //---Handling menu item selected ----//
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
+        //The Help button
         if(id == R.id.navigate)
             navigationDrawerFragment.selectItem(2);
+        //The Add button
         if(id == R.id.add)
             startActivity(new Intent(this,AddingActivity.class));
-        //noinspection SimplifiableIfStatement
 
 
         return super.onOptionsItemSelected(item);

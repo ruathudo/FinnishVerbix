@@ -11,13 +11,13 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 /**
- * Created by longtran on 4/18/2015.
+ * Create the Alarm Service for daily notification.
  */
 public class AlarmService extends Service {
 
-    private static final int NOTIFICATION_ID = 1;
+
     private NotificationManager notificationManager;
-    private PendingIntent pendingIntent;
+
     @Override
     public IBinder onBind(Intent intent) {
         Log.d("SERVICE ", " ON Bind ");
@@ -42,9 +42,11 @@ public class AlarmService extends Service {
         super.onStart(intent, startId);
         Log.d("SERVICE ", " ON START ");
 
+        //Set  up the notification manager
         notificationManager = (NotificationManager) this.getApplicationContext().getSystemService(this.getApplicationContext().NOTIFICATION_SERVICE);
         Intent intent1 = new Intent(this.getApplicationContext(),MainActivity.class);
 
+        //Set up the notification
         Notification notification = new Notification(R.drawable.finlan_icon,"Time to review your favorite words!", System.currentTimeMillis());
         intent1.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
